@@ -1,0 +1,191 @@
+---------------------------------------------------
+-- AADL2.1
+-- TASTE type interfaceview
+-- 
+-- generated code: do not edit
+---------------------------------------------------
+
+PACKAGE interfaceview::IV::odometry
+PUBLIC
+
+WITH interfaceview::IV::dummy_pose_consumer;
+WITH Taste;
+WITH DataView;
+WITH TASTE_IV_Properties;
+SUBPROGRAM PI_mc_in
+FEATURES
+  command : IN PARAMETER DataView::Base_commands_Motion2D {
+    Taste::encoding => NATIVE;
+  };
+PROPERTIES
+  Taste::Associated_Queue_Size => 10;
+END PI_mc_in;
+
+SUBPROGRAM IMPLEMENTATION PI_mc_in.others
+PROPERTIES
+  Compute_Execution_Time => 0 ms .. 10 ms;
+END PI_mc_in.others;
+
+SUBPROGRAM RI_pose_out
+FEATURES
+  pose : IN PARAMETER DataView::Base_Pose2D {
+    Taste::encoding => NATIVE;
+  };
+END RI_pose_out;
+
+SUBPROGRAM IMPLEMENTATION RI_pose_out.others
+END RI_pose_out.others;
+
+SYSTEM odometry
+FEATURES
+  PI_mc_in : PROVIDES SUBPROGRAM ACCESS interfaceview::IV::odometry::PI_mc_in.others {
+    Taste::coordinates => "143303 99998";
+    Taste::RCMoperationKind => sporadic;
+    Taste::RCMperiod => 10 ms;
+    Taste::Deadline => 10 ms;
+    Taste::InterfaceName => "mc_in";
+  };
+  RI_pose_out : REQUIRES SUBPROGRAM ACCESS interfaceview::IV::dummy_pose_consumer::PI_pose_in.others {
+    Taste::coordinates => "169287 99998";
+    Taste::RCMoperationKind => any;
+    Taste::InterfaceName => "pose_out";
+    Taste::labelInheritance => "false";
+  };
+PROPERTIES
+  Source_Language => (CPP);
+  Taste::Active_Interfaces => any;
+END odometry;
+
+SYSTEM IMPLEMENTATION odometry.others
+END odometry.others;
+
+END interfaceview::IV::odometry;
+
+PACKAGE interfaceview::IV::dummy_mc_producer
+PUBLIC
+
+WITH interfaceview::IV::odometry;
+WITH Taste;
+WITH DataView;
+WITH TASTE_IV_Properties;
+SUBPROGRAM RI_mc_in
+FEATURES
+  command : IN PARAMETER DataView::Base_commands_Motion2D {
+    Taste::encoding => NATIVE;
+  };
+END RI_mc_in;
+
+SUBPROGRAM IMPLEMENTATION RI_mc_in.others
+END RI_mc_in.others;
+
+SUBPROGRAM PI_clock
+END PI_clock;
+
+SUBPROGRAM IMPLEMENTATION PI_clock.others
+PROPERTIES
+  Compute_Execution_Time => 0 ms .. 10 ms;
+END PI_clock.others;
+
+SYSTEM dummy_mc_producer
+FEATURES
+  RI_mc_in : REQUIRES SUBPROGRAM ACCESS interfaceview::IV::odometry::PI_mc_in.others {
+    Taste::coordinates => "122359 98739";
+    Taste::RCMoperationKind => any;
+    Taste::InterfaceName => "mc_in";
+    Taste::labelInheritance => "true";
+  };
+  PI_clock : PROVIDES SUBPROGRAM ACCESS interfaceview::IV::dummy_mc_producer::PI_clock.others {
+    Taste::coordinates => "101101 90864";
+    Taste::RCMoperationKind => cyclic;
+    Taste::RCMperiod => 10 ms;
+    Taste::Deadline => 10 ms;
+    Taste::InterfaceName => "clock";
+  };
+PROPERTIES
+  Source_Language => (CPP);
+  Taste::Active_Interfaces => any;
+END dummy_mc_producer;
+
+SYSTEM IMPLEMENTATION dummy_mc_producer.others
+END dummy_mc_producer.others;
+
+END interfaceview::IV::dummy_mc_producer;
+
+PACKAGE interfaceview::IV::dummy_pose_consumer
+PUBLIC
+
+WITH Taste;
+WITH DataView;
+WITH TASTE_IV_Properties;
+SUBPROGRAM PI_pose_in
+FEATURES
+  pose : IN PARAMETER DataView::Base_Pose2D {
+    Taste::encoding => NATIVE;
+  };
+PROPERTIES
+  Taste::Associated_Queue_Size => 10;
+END PI_pose_in;
+
+SUBPROGRAM IMPLEMENTATION PI_pose_in.others
+PROPERTIES
+  Compute_Execution_Time => 0 ms .. 10 ms;
+END PI_pose_in.others;
+
+SYSTEM dummy_pose_consumer
+FEATURES
+  PI_pose_in : PROVIDES SUBPROGRAM ACCESS interfaceview::IV::dummy_pose_consumer::PI_pose_in.others {
+    Taste::coordinates => "194956 99526";
+    Taste::RCMoperationKind => sporadic;
+    Taste::RCMperiod => 10 ms;
+    Taste::Deadline => 10 ms;
+    Taste::InterfaceName => "pose_in";
+  };
+PROPERTIES
+  Source_Language => (CPP);
+  Taste::Active_Interfaces => any;
+END dummy_pose_consumer;
+
+SYSTEM IMPLEMENTATION dummy_pose_consumer.others
+END dummy_pose_consumer.others;
+
+END interfaceview::IV::dummy_pose_consumer;
+
+PACKAGE interfaceview::IV
+PUBLIC
+
+WITH interfaceview::IV::odometry;
+WITH interfaceview::IV::dummy_mc_producer;
+WITH interfaceview::IV::dummy_pose_consumer;
+WITH Taste;
+WITH DataView;
+WITH TASTE_IV_Properties;
+SYSTEM interfaceview
+END interfaceview;
+
+SYSTEM IMPLEMENTATION interfaceview.others
+SUBCOMPONENTS
+  odometry : SYSTEM interfaceview::IV::odometry::odometry.others {
+    Taste::coordinates => "143303 93698 169287 119524";
+  };
+  dummy_mc_producer : SYSTEM interfaceview::IV::dummy_mc_producer::dummy_mc_producer.others {
+    Taste::coordinates => "93226 90864 122359 124091";
+  };
+  dummy_pose_consumer : SYSTEM interfaceview::IV::dummy_pose_consumer::dummy_pose_consumer.others {
+    Taste::coordinates => "194956 91651 238891 123461";
+  };
+CONNECTIONS
+  odometry_PI_mc_in_dummy_mc_producer_RI_mc_in : SUBPROGRAM ACCESS odometry.PI_mc_in -> dummy_mc_producer.RI_mc_in {
+    Taste::coordinates => "122359 98739 132831 98739 132831 99998 143303 99998";
+  };
+  dummy_pose_consumer_PI_pose_in_odometry_RI_pose_out : SUBPROGRAM ACCESS dummy_pose_consumer.PI_pose_in -> odometry.RI_pose_out {
+    Taste::coordinates => "169287 99998 186767 99998 186767 99526 194956 99526";
+  };
+END interfaceview.others;
+
+PROPERTIES
+  Taste::dataView => ("DataView");
+  Taste::dataViewPath => ("plex-odometry_dv.aadl");
+  Taste::coordinates => "0 0 297000 210000";
+  Taste::version => "2.0";
+END interfaceview::IV;
+
