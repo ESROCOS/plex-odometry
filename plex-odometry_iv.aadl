@@ -68,6 +68,16 @@ WITH interfaceview::IV::odometry;
 WITH Taste;
 WITH DataView;
 WITH TASTE_IV_Properties;
+SUBPROGRAM PI_clock
+PROPERTIES
+  Taste::Associated_Queue_Size => 1;
+END PI_clock;
+
+SUBPROGRAM IMPLEMENTATION PI_clock.others
+PROPERTIES
+  Compute_Execution_Time => 0 ms .. 10 ms;
+END PI_clock.others;
+
 SUBPROGRAM RI_mc_in
 FEATURES
   command : IN PARAMETER DataView::Base_commands_Motion2D {
@@ -78,28 +88,20 @@ END RI_mc_in;
 SUBPROGRAM IMPLEMENTATION RI_mc_in.others
 END RI_mc_in.others;
 
-SUBPROGRAM PI_clock
-END PI_clock;
-
-SUBPROGRAM IMPLEMENTATION PI_clock.others
-PROPERTIES
-  Compute_Execution_Time => 0 ms .. 10 ms;
-END PI_clock.others;
-
 SYSTEM dummy_mc_producer
 FEATURES
-  RI_mc_in : REQUIRES SUBPROGRAM ACCESS interfaceview::IV::odometry::PI_mc_in.others {
-    Taste::coordinates => "122359 98739";
-    Taste::RCMoperationKind => any;
-    Taste::InterfaceName => "mc_in";
-    Taste::labelInheritance => "true";
-  };
   PI_clock : PROVIDES SUBPROGRAM ACCESS interfaceview::IV::dummy_mc_producer::PI_clock.others {
     Taste::coordinates => "101101 90864";
     Taste::RCMoperationKind => cyclic;
     Taste::RCMperiod => 10 ms;
     Taste::Deadline => 10 ms;
     Taste::InterfaceName => "clock";
+  };
+  RI_mc_in : REQUIRES SUBPROGRAM ACCESS interfaceview::IV::odometry::PI_mc_in.others {
+    Taste::coordinates => "122359 98739";
+    Taste::RCMoperationKind => any;
+    Taste::InterfaceName => "mc_in";
+    Taste::labelInheritance => "true";
   };
 PROPERTIES
   Source_Language => (CPP);
@@ -141,7 +143,7 @@ FEATURES
     Taste::InterfaceName => "pose_in";
   };
 PROPERTIES
-  Source_Language => (CPP);
+  Source_Language => (GUI);
   Taste::Active_Interfaces => any;
 END dummy_pose_consumer;
 
@@ -160,6 +162,9 @@ WITH Taste;
 WITH DataView;
 WITH TASTE_IV_Properties;
 SYSTEM interfaceview
+PROPERTIES
+  Taste::dataView => ("DataView");
+  Taste::dataViewPath => ("plex-odometry_dv.aadl");
 END interfaceview;
 
 SYSTEM IMPLEMENTATION interfaceview.others
