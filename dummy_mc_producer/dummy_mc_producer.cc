@@ -9,7 +9,6 @@ void dummy_mc_producer_startup()
 {
     /* Write your initialization code here,
        but do not make any call to a required interface. */
-	
 }
 
 void dummy_mc_producer_PI_clock()

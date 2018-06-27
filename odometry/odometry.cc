@@ -6,6 +6,7 @@
 #include <base_support/Base-commands-Motion2DConvert.hpp>
 #include <base_support/Base-Pose2DConvert.hpp>
 #include <cmath>
+#include <iostream>
 
 void odometry_startup()
 {
@@ -26,13 +27,13 @@ void odometry_PI_mc_in(const asn1SccBase_commands_Motion2D *IN_command)
    // (0 - 2 PI, counterclockwise positive) 
    // Then add rotated movement to current position
 
-
    //update x
    //update y base_pose.position = 
-   
 
    base_pose.orientation = fmod((base_pose.orientation + base_mc.rotation),2*M_PI);
    
    asn1SccBase_Pose2D_toAsn1(asn_pose,base_pose);
+
+   odometry_RI_pose_out(&asn_pose);
 }
 
