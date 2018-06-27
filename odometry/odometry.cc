@@ -8,7 +8,7 @@
 #include <cmath>
 
 void odometry_startup()
-{:
+{
     /* Write your initialization code here,
        but do not make any call to a required interface. */
 }
@@ -19,7 +19,7 @@ void odometry_PI_mc_in(const asn1SccBase_commands_Motion2D *IN_command)
    base::commands::Motion2D base_mc;
 
    asn1SccBase_commands_Motion2D_fromAsn1(base_mc, *IN_command);
-
+   asn1SccBase_Pose2D asn_pose;
 
    // interprete forward/backward movement as (1,0) or (-1,0) respectively
    // and rotate it around origin by current orientation
@@ -31,7 +31,7 @@ void odometry_PI_mc_in(const asn1SccBase_commands_Motion2D *IN_command)
    //update y base_pose.position = 
    
 
-   base_pose.orientation = fmod((base_pose.orientation + base_mc.orientation),2*M_PI)
+   base_pose.orientation = fmod((base_pose.orientation + base_mc.rotation),2*M_PI);
    
    asn1SccBase_Pose2D_toAsn1(asn_pose,base_pose);
 }
